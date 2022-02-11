@@ -41,8 +41,9 @@ object csvread {
     // Transformations
     val df = orders.join(customers,orders("customerNumber") ===  customers("customerNumber"),"inner").
                     join(payments,payments("customerNumber") ===  customers("customerNumber"),"inner").
+                    withColumn("originalPrice",lit(payments("amount")*2)).
                     filter(payments("amount") > 1000 && orders("status") === "Shipped").
-                    select("customerName","shippedDate","status","amount","country")
+                    select("customerName","shippedDate","status","amount","originalPrice","country")
     df.printSchema()
     df.show()
     df.write.format("jdbc")
